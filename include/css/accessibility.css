@@ -1,0 +1,222 @@
+/*
+    Copyright (c) 2017 Patrick Demian
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+
+/* Content skipping */
+.skip-top {
+    top: 10px;
+    margin: 10px 40% !important;
+}
+.skip {
+    background: #335075 !important;
+    color: #FFFFFF !important;
+    position: absolute !important;
+    clip: rect(1px 1px 1px 1px); /* IE 7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    float: left;
+    margin-left: 20%;
+}
+.skip:focus,
+.skip:active {
+    font-weight: 700;
+    box-shadow: 0 0 2px 2px rgba(0,0,0, 0.6);
+    clip: auto !important;
+    display: block;
+    text-decoration: underline;
+    padding: 5px;
+    text-align: center;
+    top: auto;
+    min-width: 20%;
+    text-align: center;
+    z-index: 10000;
+}
+
+/* misc fixes */
+.alert-success {
+    color: #2E562E;
+}
+.alert-danger {
+    color: #762F2E;
+}
+
+/* 
+    Todo: This part is actually barely accessible because of the use of px
+    While this does conform, it should be using em units instead 
+    Honestly, bootstrap used px and I just modified the units instead of 
+    implementing it correctly the first time
+*/
+
+/* Font sizes */
+.font-selector-m {
+    font-size: 14px !important;
+}
+.font-selector-l {
+    font-size: 21px !important;
+}
+.font-selector-xl {
+    font-size: 28px !important;
+}
+
+.font-selector-active {
+	color: #FFFFFF !important;
+}
+
+
+/* Medium text sizes */
+.m-text .jumbotron h1 {
+	font-size: 63px;
+}
+.m-text h1 {
+	font-size: 36px;
+}
+.m-text h2 {
+	font-size: 30px;
+}
+.m-text h3 {
+	font-size: 24px;
+}
+.m-text h4 {
+    font-size: 18px;
+}
+.m-text p,
+.m-text a,
+.m-text span,
+.m-text li,
+.m-text figcaption {
+	font-size: 14px;
+}
+.m-text input,
+.m-text select,
+.m-text textarea  {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
+
+.m-text .footer {
+    height: 113px;
+}
+body.m-text {
+    margin-bottom: 113px;
+}
+
+@media (min-width: 768px) {
+    .m-text .footer {
+        height: 92px;
+    }
+    body.m-text {
+        margin-bottom: 92px;
+    }
+}
+
+
+/* Large text sizes */
+.l-text .jumbotron h1 {
+	font-size: 95px;
+}
+.l-text h1 {
+	font-size: 54px;
+}
+.l-text h2 {
+	font-size: 45px;
+}
+.l-text h3 {
+	font-size: 36px;
+}
+.l-text h4 {
+    font-size: 27px;
+}
+.l-text p,
+.l-text a ,
+.l-text span,
+.l-text li ,
+.l-text figcaption{
+	font-size: 21px;
+}
+.l-text input,
+.l-text select,
+.l-text textarea  {
+    padding: 10px 16px;
+    font-size: 21px;
+    border-radius: 6px;
+}
+.l-text .footer {
+    height: 174px;
+}
+body.l-text {
+    margin-bottom: 174px;
+}
+
+@media (min-width: 768px) {
+    .l-text .footer {
+        height: 112px;
+    }
+    body.l-text {
+        margin-bottom: 112px;
+    }
+}
+
+/* Extra Large text sizes */
+.xl-text .jumbotron h1 {
+	font-size: 126px;
+}
+.xl-text h1 {
+	font-size: 72px;
+}
+.xl-text h2 {
+	font-size: 60px;
+}
+.xl-text h3 {
+	font-size: 48px;
+}
+.xl-text h4 {
+    font-size: 36px;
+}
+.xl-text p,
+.xl-text a,
+.xl-text span,
+.xl-text li ,
+.xl-text figcaption{
+	font-size: 28px;
+}
+.xl-text input,
+.xl-text select,
+.xl-text textarea {
+    padding: 14px 20px;
+    font-size: 28px;
+    border-radius: 9px;
+}
+.xl-text .footer {
+    height: 188px;
+}
+body.xl-text {
+    margin-bottom: 188px;
+}
+
+@media (min-width: 768px) {
+    .xl-text .footer {
+        height: 176px;
+    }
+    body.xl-text {
+        margin-bottom: 176px;
+    }
+}

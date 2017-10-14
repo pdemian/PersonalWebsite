@@ -1,0 +1,226 @@
+<?php
+    /*
+        Copyright (c) 2017 Patrick Demian
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+    */
+
+    $title = "Contact Me";
+    $page = "contact";
+    include $_SERVER['DOCUMENT_ROOT'] . "/include/template/header.html";
+?>
+
+<div class="jumbotron">
+  <div class="container text-center">
+    <h1>Contact Me</h1>
+  </div>
+</div>
+
+<div class="container-fluid article">
+    <div class="center-block center-div">
+        <?php
+            function send_encrypted_mail($subject, $message) {
+                //I should eventually use PGP (GnuPG) but that requires installing an external library
+                //and I really don't feel like it right now and also this is equivalent.
+                //there's no inherit security risk in using OpenSSL over PGP (GnuPG) as long as this is implemented correctly.
+                date_default_timezone_set('America/Toronto');
+                
+                $email = "form@patrickdemian.me";
+                $headers = "From: <webmaster@patrickdemian.me>\r\n";
+                $enc_msg = "";
+                $pub_key = openssl_get_publickey(file_get_contents($_SERVER['DOCUMENT_ROOT']."/include/crypto/public4096.pem"));
+                
+                //encrypt
+                if(openssl_public_encrypt($message, $enc_msg, $pub_key) === false) {
+                    error_log("Could not encrypt message", 0);
+                    return false;
+                }
+                //and mail
+                if(mail($email, $subject, wordwrap(base64_encode($enc_msg),70,"\r\n"), $headers) === false) {
+                    error_log("Could not send message", 0);
+                    return false;
+                }
+                
+                openssl_free_key($pub_key);
+                return true;
+            }
+        
+            if($_SERVER['REQUEST_METHOD'] == "POST") {
+                //sanitize everything
+                $name      = filter_input(INPUT_POST, 'name',      FILTER_SANITIZE_ENCODED, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
+                $email     = filter_input(INPUT_POST, 'email',     FILTER_VALIDATE_EMAIL,  array("flags" => FILTER_FLAG_EMAIL_UNICODE));
+                $telephone = filter_input(INPUT_POST, 'telephone', FILTER_SANITIZE_ENCODED, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
+                $message   = filter_input(INPUT_POST, 'message',   FILTER_SANITIZE_ENCODED, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
+                $reason    = filter_input(INPUT_POST, 'reason',    FILTER_VALIDATE_REGEXP, array("options" => array("regexp"=>"/^[1-3]$/")));
+
+                $errors = array();
+                
+                //validate input
+                if(!isset($_POST['name']) || !isset($_POST['reason']) || !isset($_POST['message'])) {
+                    array_push($errors, 'Error during submition of form. Please go back and try again. If you still get this error, contact <a href="mailto:webmaster@patrickdemian">webmaster@patrickdemian</a>');
+                }
+                else {
+                    if(empty($name) || strlen($_POST['name']) > 100) {
+                        array_push($errors, "Name blank or too long.");
+                    }
+                    if(empty($reason)) {
+                        array_push($errors, "Reason not given or invalid.");
+                    }
+                    if(empty($message) || strlen($_POST['message']) > 1000) {
+                        array_push($errors, "Message blank or too long.");
+                    }
+                }
+                //no way to really check if a telephone number is invalid. 
+                //every country does it differently and there's so many ways to specify a number. God help me if someone types in their phone number using LETTERS!
+                //Call our corporate number at 1-(800) BREAK-FORM
+                if(isset($_POST['telephone']) && strlen($_POST['telephone']) > 50) {
+                    array_push($errors, "Telephone number too long.");
+                }
+                //even emails can't really be validated. The PHP filter doesn't fully conform to all valid emails. I mean, just look at this madness
+                //"this@is".a\(valid)!email+address@example.com
+                //"()<>[]:,;@\\\"!#$%&'-/=?^_`{}| ~.a"@example.org
+                //I could use FILTER_SANITIZE_ENCODED if I wanted to preserve EVERY email available, but I don't believe having to decode every email is worth it
+                if(isset($_POST['email']) && (strlen($_POST['email']) > 100 || strlen($_POST['email']) > 0 && strlen($email) == 0)) {
+                    array_push($errors, "Email invalid or too long.");
+                }
+                
+                if(count($errors) == 0) {
+                    $msg = "Name: " . $name . "\r\n";
+                    if(!empty($telephone)) $msg .= "Telephone: " . $telephone . "\r\n";
+                    if(!empty($email)) $msg .= "Email: " . $email . "\r\n";
+                    switch($reason) {
+                        case 1:
+                            $reason = "Careers";
+                            break;
+                        case 2:
+                            $reason = "Questions";
+                            break;
+                        case 3:
+                            $reason = "Report";
+                            break;
+                    }
+                    $msg .= "Reason: " . $reason . "\r\n";
+                    $msg .= "IP: " . $_SERVER['REMOTE_ADDR'] . "\r\n\r\n";
+                    $msg .= $message . "\r\n<END>";
+                    
+                    $subject = $reason . " [".date(DATE_ATOM)."]";
+                    
+                    if(!send_encrypted_mail($subject, $msg)) {
+                        array_push($errors, "Failed sending message");
+                    }
+                }
+                
+                //seems redundant, but because we might get a new error with send_encrypted_mail
+                //we check again
+                if(count($errors) == 0) {
+        ?>
+        
+                    <div class="alert alert-success left-align center-block center-div" role="alert">
+                        <h2><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&#160;Message sent successfully.</h2>
+                        <p><a class="modifiable-link" href="/contact.html<?= $query_string ?>" aria-label="Go back link">Click here to go back.</a></p>
+                    </div>
+        <?php
+                }
+                else {
+        ?>
+                    <div class="alert alert-danger left-align center-block center-div" role="alert">
+                        <h2><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>&#160;Message could not be sent due to the following error(s):</h2>
+                        <ul>
+        <?php
+                        foreach($errors as $error) {
+                            echo "<li>" . $error . "</li>";
+                        }
+        ?>
+                        </ul>
+                        <p>Click the back button or <a class="modifiable-link" href="/contact.html<?= $query_string ?>" aria-label="Go back link">click here to go back</a> and try again.</p>
+                    </div>
+        <?php
+                }
+            }
+            else {
+        ?>
+                <h2>Direct contact</h2>
+                <p>E-mail: <a href="mailto:me@patrickdemian.me">me@patrickdemian.me</a></p>
+                <p>Linkedin: <a class="external" target="_blank" href="https://www.linkedin.com/in/patrickdemian" rel="noopener noreferrer">https://www.linkedin.com/in/patrickdemian</a></p>
+                <p>My primary method of communication is via email. Unless I have given out my personal phone number to you, please contact me only via email or the form below.</p>
+                <p>I aim to respond within 24 hours of any email.</p>
+                <br>
+                
+                <h2>Contact Form</h2>
+                <p>You can also communicate with me via this form. Please include at least one method of communication if you wish for me to contact you at a later date. <a href="/privacy.html">Read the privacy policy.</a></p>
+
+                <form id="contact-form" action="/contact.html" method="post">
+                    <div class="input-group-sm">
+                        <div class="form-group">
+                            <label for="name">
+                                <span>Name: </span>
+                                <span class="required">(required)</span>
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Your name" required="required" maxlength="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">
+                                <span>Email: </span>
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Your email" maxlength="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telephone">
+                                <span>Telephone: </span>
+                            </label>
+                            <input type="tel" class="form-control" id="telephone" name="telephone" placeholder="Your telephone number" maxlength="50">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reason">
+                                <span>Reason for contact: </span>
+                                <span class="required">(required)</span>
+                            </label>
+                            <select class="form-control" id="reason" name="reason" required="required">
+                                <option value="" disabled selected>Please select an option...</option>
+                                <option value="1">Careers</option>
+                                <option value="2">Questions, Comments, and Concerns</option>
+                                <option value="3">Report an error on this or other pages</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">
+                                <span>Message: </span>
+                                <span class="required">(required)</span>
+                                <span class="sr-only">Max length 1000 characters</span>
+                            </label>
+                            <textarea class="form-control" id="message" name="message" required="required" maxlength="1000" placeholder="Your message" rows="5" data-count-target="#count-characters"></textarea>
+                            <p class="hidden float-right" id="count-characters">1000 characters left</p>
+                        </div>
+                        
+                        <input type="hidden" class="modifiable-value" name="text" value="<?= $size ?>">
+                        
+                        <input type="submit" value="Submit" class="btn btn-primary">
+                    </div>
+                </form>
+        <?php 
+        }
+        ?>
+    </div>
+</div>
+
+<?php include $_SERVER['DOCUMENT_ROOT'] . "/include/template/footer.html" ?>

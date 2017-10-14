@@ -1,0 +1,5 @@
+#any log files
+*.log
+
+#SSL cert file
+.well-known/

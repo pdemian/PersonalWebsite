@@ -1,0 +1,7 @@
+User-Agent: *
+Disallow: /error/
+Disallow: /include/css/
+Disallow: /include/javascript/
+Disallow: /include/template/
+
+Sitemap: https://patrickdemian.me/sitemap.xml

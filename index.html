@@ -1,0 +1,142 @@
+<?php
+    /*
+        Copyright (c) 2017 Patrick Demian
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+    */
+
+    $title = "About Me";
+    $page = "about";
+    include $_SERVER['DOCUMENT_ROOT'] . "/include/template/header.html";
+?>
+
+<div class="jumbotron">
+  <div class="container text-center">
+    <h1>About Me</h1>      
+  </div>
+</div>
+
+<div class="container-fluid article">
+    <div class="center-div center-block">
+        <h2 class="underline-border">Skills and Abilities</h2>
+        <ul>
+            <li>Proficient in C, C#, Java, JavaScript, PHP, SQL, Shell, x86 assembly</li>
+            <li>Proven ability to debug quickly and optimize code for production use</li>
+            <li>Familiar with agile development and adapting to rapidly changing project requirements</li>
+            <li>Experiences with full stack web development</li>
+        </ul>
+        <br>
+        
+        <h2 class="underline-border">Work Experience</h2>
+        
+        <h3 class="bold">Environment and Climate Change Canada</h3>
+        <h4>Co-op Software Developer</h4>
+        <p class="italic">May 2016 - August 2017</p>
+        <p>I worked on maintaining several web based technologies that provide weather information to the public.</p>
+        
+        <h3 class="bold">Rogue Transportation</h3>
+        <h4>Junior Software Developer</h4>
+        <p class="italic">May 2015 - August 2015</p>
+        <p>As a Junior Software Developer, I worked on designing, implementing and rolling out several pieces of software. I was also assigned to debug current applications as well as add functionality to them.</p>
+        <p>Designed and developed an internal tool used by the Customer service department written in C# that used a Microsoft SQL Server as the backend</p>
+        <p>Worked in an agile development as expectations for the software changed frequently</p>
+        <p>Successfully managed and bug tested large established code bases</p>
+        <p>Tested out future big data expansion with Hadoop implemented under a Linux environment</p>
+        <p>Worked with a data analytics team to collect, aggregate, and display up to date logistical information succinctly</p>
+
+        
+        <h3 class="bold">Ryerson University</h3>
+        <h4>Software Developer</h4>
+        <p class="italic">May 2014 - August 2014</p>
+        <p>Headed the design and development of a cross platform mobile application for students</p>
+        <p>Developed iOS and Android application with C# and SQL</p>
+        <p>Adapted to ever changing specifications and feature requirements, tight deadlines and unexpected delays while maintaining quality</p>
+        <p>Self taught mobile development on the job with no interference to project schedule and delivered product on time</p>
+        <p>Wrote all of the backend code to retrieve tweets, announcements, the search tools, and server side code to store and deliver information</p>
+        <p>Worked on optimizing code and threading the <abbr title="User Interface">UI</abbr> for a better user experience</p>
+        <br>
+        
+        <h2 class="underline-border">Education</h2>
+        <h3 class="bold">Ryerson University</h3>
+        <h4>Computer Science</h4>
+        <p class="italic">2013 - Present</p>
+        <p>Will recieve <abbr title="Bachelor of Science">B.Sc.</abbr> (<abbr title="Honours">Hons</abbr>) in May 2018</p>
+        <br>
+        
+        <h2 class="underline-border">Portfolio</h2>
+
+        <h3 class="bold">Work at Environment and Climate Change Canada</h3>
+        <p>A Canadian timezone management library</p><a class="external" target="_blank" rel="noopener noreferrer" href="http://www.weather.gc.ca/cacheable/js/shared-js/ctzlib.js">www.weather.gc.ca/cacheable/js/shared-js/ctzlib.js</a>
+        <br>
+        <p>A side panel for user favourite bookmarks on site</p><a class="external" target="_blank" rel="noopener noreferrer" href="http://www.weather.gc.ca/cacheable/js/favourites/favourites.js">www.weather.gc.ca/cacheable/js/favourites/favourites.js</a>
+        <br>
+        <p>A Modal dialog box library</p><a class="external" target="_blank" rel="noopener noreferrer" href="http://www.weather.gc.ca/cacheable/js/shared-js/modals.js">www.weather.gc.ca/cacheable/js/shared-js/modals.js</a>
+
+        <h3 class="bold">This Website</h3>
+        <p>I am committed to ensuring accessibility of this website for people with disabilities. As of October 9, 2017, all pages on this website conform to the <a href="https://www.w3.org/TR/2008/REC-WCAG20-20081211/" class="external" target="_blank" rel="noopener noreferrer">Web Content Accessibility Guide 2.0 (Level AAA).</a> This website relies on HTML, CSS, and JavaScript, all of which have been specifically designed to conform with the Web Content Accessibility Guide.</p>
+        <p>This website has also been tested to work with no significant loss of functionality on <abbr title="Internet Explorer">IE</abbr> 7+, Google Chrome 3+, and FireFox 4+ as well as without JavaScript enabled. However there may be reduced accessibility functionality (Level AA or lower) on older browsers and/or without JavaScript enabled.</p>
+        
+        <h3 class="bold">Design and Development of an iOS and Android <abbr title="Application">App</abbr></h3>
+        <p>I worked on designing and implementing an iOS and Android <abbr title="Application">app</abbr> managing links, searching for classes, twitter integration, gallery functionality, and other collections of information.</p>
+    </div>
+    <div class="container-fluid">    
+        <div class="row">
+            <div class="col-sm-4">
+                <figure>
+                    <img src="/include/image/mobile/1.jpg" class="img-responsive" alt="Start screen of the app in iOS, containing announcements, a twitter feed, and links to other sections of the app.">
+                    <figcaption>Start screen of the <abbr title="Application">app</abbr> in iOS, containing announcements, a twitter feed, and links to other sections of the <abbr title="Application">app</abbr>.</figcaption>
+                </figure>
+            </div>
+            <div class="col-sm-4"> 
+                <figure>
+                    <img src="/include/image/mobile/2.jpg" class="img-responsive" alt="Frequently asked questions (FAQ) section of the app in iOS.">
+                    <figcaption>Frequently asked questions (FAQ) section of the <abbr title="Application">app</abbr> in iOS.</figcaption>
+                </figure>
+            </div>
+            <div class="col-sm-4"> 
+                <figure>
+                    <img src="/include/image/mobile/3.jpg" class="img-responsive" alt="Image gallery in the app in iOS.">
+                    <figcaption>Image gallery in the <abbr title="Application">app</abbr> in iOS.</figcaption>
+                </figure>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"> 
+                <figure>
+                    <img src="/include/image/mobile/4.jpg" class="img-responsive" alt="Mapping functionality for the school campus in the app on Android.">
+                    <figcaption>Mapping functionality for the school campus in the <abbr title="Application">app</abbr> on Android.</figcaption>
+                </figure>
+            </div>
+            <div class="col-sm-4">
+                <figure>
+                    <img src="/include/image/mobile/5.jpg" class="img-responsive" alt="Mapping functionality with search for the school campus in the app on Android.">
+                    <figcaption>Mapping functionality with search for the school campus in the <abbr title="Application">app</abbr> on Android.</figcaption>
+                </figure>
+            </div>
+            <div class="col-sm-4"> 
+                <figure>
+                    <img src="/include/image/mobile/6.jpg" class="img-responsive" alt="A list of student groups available in the app on Android.">
+                    <figcaption>A list of student groups available in the <abbr title="Application">app</abbr> on Android.</figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include $_SERVER['DOCUMENT_ROOT'] . "/include/template/footer.html" ?>
