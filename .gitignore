@@ -3,3 +3,6 @@
 
 #SSL cert file
 .well-known/
+
+#misc
+*.db

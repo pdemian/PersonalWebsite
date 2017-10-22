@@ -167,3 +167,11 @@ figure {
 .ie .footer {
 	position: relative;
 }
+
+/* Overwritten when we encounter IE: See header.html */
+.ie-only {
+    display:none;
+}
+.ie-none {
+    display:block;
+}
