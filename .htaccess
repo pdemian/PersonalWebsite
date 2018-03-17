@@ -1,7 +1,9 @@
 RewriteEngine on
 RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
 
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain
@@ -24,7 +26,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   Header set X-XSS-Protection "1; mode=block" 
 </IfModule>
 
-
 #Missing documents will fail gracefully using Apache's builtins
 #This is particularly useful for 500 error codes so we don't overload the server
 ErrorDocument 400 /error/400.html
@@ -38,7 +39,6 @@ ErrorDocument 505 /error/505.html
 Options -Indexes
 SetEnv TZ America/New_York
 ServerSignature Off
-
 
 #AddHandler application/x-httpd-php70 .html
 #my host requires this specific line

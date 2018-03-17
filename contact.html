@@ -1,6 +1,6 @@
 <?php
     /*
-        Copyright (c) 2017 Patrick Demian
+        Copyright (c) 2018 Patrick Demian
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
         SOFTWARE.
     */
 
+	putenv("GNUPGHOME=" . $_SERVER['DOCUMENT_ROOT'] . "/../.gnupg");
     $title = "Contact Me";
     $page = "contact";
     include $_SERVER['DOCUMENT_ROOT'] . "/include/template/header.html";
@@ -36,67 +37,72 @@
     <div class="center-block center-div">
         <?php
             function send_encrypted_mail($subject, $message) {
-                //I should eventually use PGP (GnuPG) but that requires installing an external library
-                //and I really don't feel like it right now and also this is equivalent.
-                //there's no inherit security risk in using OpenSSL over PGP (GnuPG) as long as this is implemented correctly.
                 date_default_timezone_set('America/Toronto');
                 
                 $email = "form@patrickdemian.me";
                 $headers = "From: <webmaster@patrickdemian.me>\r\n";
                 $enc_msg = "";
-                $pub_key = openssl_get_publickey(file_get_contents($_SERVER['DOCUMENT_ROOT']."/include/crypto/public4096.pem"));
-                
-                //encrypt
-                if(openssl_public_encrypt($message, $enc_msg, $pub_key) === false) {
-                    error_log("Could not encrypt message", 0);
-                    return false;
-                }
+				
+				$pub_key = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/include/crypto/pgp.pem');
+				
+                $gpg = new gnupg();
+				$info = $gpg->import($pub_key);
+				$gpg->addencryptkey($info['fingerprint']);
+				$enc_msg = $gpg->encrypt($message);
+				if($enc_msg === false) {
+					error_log("Could not encrypt message", 0);
+					return false;
+				}				
+				
                 //and mail
-                if(mail($email, $subject, wordwrap(base64_encode($enc_msg),70,"\r\n"), $headers) === false) {
+                if(mail($email, $subject, $enc_msg, $headers) === false) {
                     error_log("Could not send message", 0);
                     return false;
                 }
-                
-                openssl_free_key($pub_key);
+
                 return true;
             }
         
-            if($_SERVER['REQUEST_METHOD'] == "POST") {
+            if($_SERVER['REQUEST_METHOD'] === "POST") {
+				//windows newlines are great!
+				$_POST['message'] = str_replace("\r\n", "\n", $_POST['message']);
+			
                 //sanitize everything
-                $name      = filter_input(INPUT_POST, 'name',      FILTER_SANITIZE_ENCODED, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
-                $email     = filter_input(INPUT_POST, 'email',     FILTER_VALIDATE_EMAIL,  array("flags" => FILTER_FLAG_EMAIL_UNICODE));
-                $telephone = filter_input(INPUT_POST, 'telephone', FILTER_SANITIZE_ENCODED, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
-                $message   = filter_input(INPUT_POST, 'message',   FILTER_SANITIZE_ENCODED, FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
+                $name      = filter_input(INPUT_POST, 'name',      FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $email     = filter_input(INPUT_POST, 'email',     FILTER_VALIDATE_EMAIL, array("flags" => FILTER_FLAG_EMAIL_UNICODE));
+                $telephone = filter_input(INPUT_POST, 'telephone', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $message   = filter_input(INPUT_POST, 'message',   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 $reason    = filter_input(INPUT_POST, 'reason',    FILTER_VALIDATE_REGEXP, array("options" => array("regexp"=>"/^[1-3]$/")));
 
                 $errors = array();
                 
                 //validate input
                 if(!isset($_POST['name']) || !isset($_POST['reason']) || !isset($_POST['message'])) {
-                    array_push($errors, 'Error during submition of form. Please go back and try again. If you still get this error, contact <a href="mailto:webmaster@patrickdemian">webmaster@patrickdemian</a>');
+                    array_push($errors, 'Error during submition of form. Please go back and try again. If you still get this error, contact <a href="mailto:webmaster@patrickdemian.me">webmaster@patrickdemian.me</a>');
                 }
                 else {
-                    if(empty($name) || strlen($_POST['name']) > 100) {
+                    if(empty($name) || strlen($_POST['name']) > 101) {
                         array_push($errors, "Name blank or too long.");
                     }
                     if(empty($reason)) {
                         array_push($errors, "Reason not given or invalid.");
                     }
-                    if(empty($message) || strlen($_POST['message']) > 1000) {
+					error_log(strlen($_POST['message']));
+                    if(empty($message) || strlen($_POST['message']) > 1001) {
                         array_push($errors, "Message blank or too long.");
                     }
                 }
                 //no way to really check if a telephone number is invalid. 
                 //every country does it differently and there's so many ways to specify a number. God help me if someone types in their phone number using LETTERS!
                 //Call our corporate number at 1-(800) BREAK-FORM
-                if(isset($_POST['telephone']) && strlen($_POST['telephone']) > 50) {
+                if(isset($_POST['telephone']) && strlen($_POST['telephone']) > 51) {
                     array_push($errors, "Telephone number too long.");
                 }
                 //even emails can't really be validated. The PHP filter doesn't fully conform to all valid emails. I mean, just look at this madness
                 //"this@is".a\(valid)!email+address@example.com
                 //"()<>[]:,;@\\\"!#$%&'-/=?^_`{}| ~.a"@example.org
                 //I could use FILTER_SANITIZE_ENCODED if I wanted to preserve EVERY email available, but I don't believe having to decode every email is worth it
-                if(isset($_POST['email']) && (strlen($_POST['email']) > 100 || strlen($_POST['email']) > 0 && strlen($email) == 0)) {
+                if(isset($_POST['email']) && (strlen($_POST['email']) > 101 || strlen($_POST['email']) > 0 && strlen($email) == 0)) {
                     array_push($errors, "Email invalid or too long.");
                 }
                 
@@ -122,7 +128,7 @@
                     $subject = $reason . " [".date(DATE_ATOM)."]";
                     
                     if(!send_encrypted_mail($subject, $msg)) {
-                        array_push($errors, "Failed sending message");
+                        array_push($errors, "Failed sending message.");
                     }
                 }
                 
@@ -223,4 +229,4 @@
     </div>
 </div>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/include/template/footer.html" ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . "/include/template/footer.html"; ?>
